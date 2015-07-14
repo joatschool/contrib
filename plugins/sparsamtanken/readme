@@ -1,0 +1,13 @@
+This plugin is only usefull in Germany!
+On thisreason my discription followed in German only!
+
+Das Plugin stellt den Preisverlauf für die Treibstoffsorten Diesel, Super E10 und Super grafisch für eine beliebige Tankstelle in Deutschland auf. Das Quelle dient die Website www.sparsamtanken.de, da dies einen sehr einfachen Aufbau hat.
+
+Vorgehensweise:
+- Auf der Homepage die gewünschte Tankstelle ermitteln und die Kennziffer (1. Parameter) merken.
+- Den Bash-Job an beliebiger Stelle abspeichern, das ausführbar machen nicht vergessen.
+- Einen Cron-Job erstellen (s. Beispiel)
+- Plugin installieren
+- Fertig.
+Viel Spaß
+ 
