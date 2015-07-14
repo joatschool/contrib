@@ -1,0 +1,75 @@
+#!/bin/bash
+#
+#
+# Munin plugin um die aktuellen Treibstoffpreise einer Star-Tabkstelle zu monitoren 
+# internet connection by reading the top_status.htm from the 
+# Don't forget zu fill in the following lines into the munin-node
+# - normally at /etc/muni/plugin-conf.d/ - an than restart munin
+#
+#   [sparsamtanken_]
+#   user root
+#                                     Jo Hartmann (Version 15.0713)
+#
+
+function konvert() {
+# Munin hat probleme mit Sonderzeichen ÄÖÜ äöüß
+   konvert=`echo $* | sed s/Ã„/Ae/g | sed s/Ã–/Oe/g | sed s/Ãœ/Oe/g | sed s/Ã¤/ae/g | sed s/Ã¶/ue/g | sed s/Ã¼/ue/g | sed s/ÃŸ/ss/g` 
+}
+
+# Personal config Section Begin ##
+  id=$0
+  id=${id##*_}
+  logfile=/var/log/sparpreise_$id.log
+# Personal config section End ####
+
+case $logfile in
+    /var/log/sparpreise_.log)
+       echo Bitte so aufrufen: startankstellen_###  wobei ### die tankstellennummer ist >&2
+       exit 1;;
+esac
+
+
+# Standard Config Section Begin ##
+  if [ "$1" = "autoconf" ]; then
+        echo yes
+        exit 0
+  fi
+
+  if [ "$1" = "config" ]; then
+       URL="http://www.sparsamtanken.de/tankstellen-details?tankstelle="$id 
+       merker="spritpreise" 
+       daten=$(wget -q -O - $URL | grep -i -B 20 $merker)
+       konvert $daten
+       daten=$konvert
+       marke=${daten##*\>Marke:\</td\>}
+       marke=${marke#*\<td\>}
+       marke=${marke%%\<*}
+
+       strasse=${daten##*\"street-address\"\>}
+       strasse=${strasse%%\<*}
+
+       plz=${daten##*\"postal-code\"\>}
+       plz=${plz%%\<*}
+
+       ort=${daten##*\"locality\"\>}
+       ort=${ort%%\<*}
+       titel=" Tankstelle: $marke, $strasse, $plz $ort"; konvert $titel; titel=$konvert; unset konvert
+       echo    graph_title  $titel
+       echo    graph_printf %5.3lf
+       echo    graph_args --base 1000 -l 100
+       echo    graph_scale no
+       echo    graph_vlabel Preis in Euro
+       echo    graph_category Auto
+       echo    die.label Diesel
+       echo    e10.label Super E10
+       echo    sup.label Super
+       echo    graph_info Treibstoffpeise von der Seite http://www.sparsamtanken.de
+       exit 0
+  fi
+# Standard Config Section End ####
+
+
+
+# Printing Section Begin #########
+  cat $logfile
+# Printing Section End ##########
