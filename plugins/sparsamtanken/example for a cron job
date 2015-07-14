@@ -1,0 +1,7 @@
+# /etc/cron.d/sparsamtanken: crontab fragment for benzinpreise
+
+#Reads every 15 minutes the new prices
+#Aktualisierung all 15 Minuten die Benzinpreis-Dateien
+2,17,32,47 * * * * root /????????/tanken/sparsamtanken.sh 2647             #Laedt die aktuellen Preise herunter
+2,17,32,47 * * * * root /????????/tanken/sparsamtanken.sh 8940             #Laedt die aktuellen Preise herunter
+2,17,32,47 * * * * root /????????/tanken/sparsamtanken.sh 11979            #Laedt die aktuellen Preise herunter
